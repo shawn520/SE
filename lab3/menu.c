@@ -1,130 +1,261 @@
-nclude <stdio.h>
-#include <stdlib.h>
+                                                                            
+/**************************************************************************/
+/* Copyright (C) mc2lab.com, SSE@USTC, 2017-2018                          */
+/*                                                                        */
+/*  FILE NAME                   :   menu.c                                */
+/*  PRINCIPAL AUTHOR            :   ShawnLiu                              */
+/*  SUBSYSTEM NAME				:   menu                                  */
+/*  MODULE NAME                 :   menu                                  */
+/*  LANGUAGE					:   C                                     */
+/*  TARGET ENVIRONMENT          :   ANY                                   */
+/*  DATE OF FIRST RELEASE       :   2017/10/07                            */
+/*  DESCRIPTION                 :   This is a menu program                */
+/**************************************************************************/
+   
+/*
+ * Revision log:
+ *
+ * Created by ShawnLiu, 2017/10/07
+ *
+ */
+  
+
+
+#include <stdio.h>
 #include <string.h>
-#include <time.h>
-#include <math.h>
-#include "linklist.h"
+#include <stdlib.h>
+
+int Help();
+int Quit();
+int Add();
+int Sub();
+int Mul();
+int Div();
 
 #define CMD_MAX_LEN 128
 #define DESC_LEN 1024
 #define CMD_NUM 10
 
-int Help();
-int Add();
-int Sub();
-int Multi();
-int Divide();
-int Time();
-int Power();
-int Quit();
+/* data struct and its operations */
+typedef struct DataNode
+{
+	char*	cmd;
+	char*	desc;
+	int		(*handler)();
+	struct	DataNode *next;
+}tDataNode;
 
-/* menu program */
+tDataNode *FindCmd(tDataNode *head, char *cmd)
+{
+	if(head == NULL || cmd == NULL)
+	{
+		return NULL;
+	}
+	tDataNode *p = head;
+	while(p != NULL)
+	{
+		if(strcmp(p->cmd, cmd) == 0)
+		{
+			return p;
+		}
+		p = p->next;
+	}
+	return NULL;
+}
+
+int ShowAllCmd(tDataNode *head)
+{
+	printf("Menu List:\n");
+	tDataNode *p = head;
+	while(p != NULL)
+	{
+		printf("%s - %s\n", p->cmd, p->desc);
+		p = p->next;
+	}
+	return 0;
+}
+
+/*menu program*/
+
 static tDataNode head[] =
-        {
-			                {"version", "menu program v2.0", NULL, &head[1]},
-							                {"help", "this is help cmd!", Help, &head[2]},
-											                {"add", "this is add cmd!", Add, &head[3]},
-															                {"sub", "this is sub cmd!", Sub, &head[4]},
-																			                {"mul", "this is multi cmd!", Multi, &head[5]},
-																							                {"div", "this is divide cmd!", Divide, &head[6]},
-																											                {"pow", "this is power cmd!", Power, &head[7]},
-																															                {"time", "this is time cmd!", Time, &head[8]},
-																																			                {"quit", "this is quit cmd", Quit, NULL}
-							        };
-
-int main()
 {
-	    char cmd[CMD_MAX_LEN];
-		    printf("Welcome!Use 'help' to get how to use this system.\n");
-			    /* cmd line begins */
-			    while(1)
-					    {
-							        printf("input a cmd >");
-									        scanf("%s", cmd);
-											        tDataNode *p = FindCmd(head, cmd);
-													        if(p == NULL)
-																        {
-																			            printf("Wrong cmd!Use 'help' to get how to use this system.\n");
-																						            continue;
-																									        }
-															        printf("%s ---- %s\n", p->cmd, p->desc);
-																	        if(p->handler != NULL)
-																				        {
-																							            p->handler();
-																										        }
-																			    }
-}
-
-
-int Help()
-{
-	    ShowAllCmd(head);
-}
+	{"help", "this is help cmd!", Help, &head[1]},
+	{"version", "menu program v2.0", NULL, &head[2]},
+	{"quit", "Quit from menu", Quit, &head[3]},
+	{"add", "Addtion", Add, &head[4]},
+	{"sub", "Substraction", Sub, &head[5]},
+	{"Mul", "Multition", Mul, &head[6]},
+	{"Div", "Division", Div, NULL}
+};
 
 int Add()
 {
-	    int a,b;
-		    printf("Please input two integer numbers:\n");
-			    scanf("%d %d", &a, &b);
-				    int c = a + b;
-					    printf("The result of add cmd is:\n");
-						    printf("%d+%d=%d\n", a,b,c);
-							    return 0;
+	double num1, num2;
+	double sum;
+	printf("Addtion. Please input two numbers:\n");
+	scanf("%lf %lf", &num1, &num2 );
+	sum = num1 + num2;
+	printf("%lf + %lf = %lf\n", num1, num2, sum);
+	return 0;
 }
+
 int Sub()
 {
-	    int a,b;
-		    printf("Please input two integer numbers:\n");
-			    scanf("%d %d", &a, &b);
-				    int c = a - b;
-					    printf("The result of sub cmd is:\n");
-						    printf("%d-%d=%d\n", a,b,c);
-							    return 0;
+	double num1, num2;
+	double result;
+	printf("Subtraction. Please input two numbers:\n");
+	scanf("%lf %lf", &num1, &num2 );
+	result = num1 - num2;
+	printf("%lf - %lf = %lf\n", num1, num2, result);
 }
 
-int Multi()
+int Mul()
 {
-	    int a,b;
-		    printf("Please input two integer numbers:\n");
-			    scanf("%d %d", &a, &b);
-				    int c = a * b;
-					    printf("The result of mul cmd is:\n");
-						    printf("%d*%d=%d\n", a,b,c);
-							    return 0;
+	double num1, num2;
+	double result;
+	printf("Multiplication. Please input two numbers:\n");
+	scanf("%lf %lf", &num1, &num2 );
+	result = num1 * num2;
+	printf("%lf * %lf = %lf\n", num1, num2, result);
 }
 
-int Divide()
+int Div()
 {
-	    int a,b;
-		    printf("Please input two integer numbers:\n");
-			    scanf("%d %d", &a, &b);
-				    int c = a / b;
-					    printf("The result of div cmd is:\n");
-						    printf("%d/%d=%d\n", a,b,c);
-							    return 0;
+	int num1, num2;
+	double result;
+	printf("Division. Please input two numbers:\n");
+	scanf("%d %d", &num1, &num2 );
+	if(num2==0)
+	{
+		printf("Error: divisor can not be zero!\n");
+	}
+	else
+	{
+		result = num1 / num2;
+		printf("%d / %d = %lf\n", num1, num2, result);
+	}
 }
 
-int Power()
+int Hello()
 {
-	    double a,b;
-		    printf("Please input two double numbers:\n");
-			    scanf("%lf %lf", &a, &b);
-				    double c = pow(a, b);
-					    printf("The result of pow cmd is: \n");
-						    printf("%.6f^%.6f=%.6f\n", a,b,c);
-							    return 0;
+	printf("Hi~My name is Shawn.\nThank you for use my cmd prgram!\n");
+
 }
 
-int Time()
+int Help()
 {
-	    time_t t = time(0);
-		    char temp[64];
-			    strftime(temp, sizeof(temp), "%Y/%m/%d %X %A", localtime(&t));
-				    puts(temp);
-					    return 0;
+	ShowAllCmd(head);
+	return 0;
+
+
+	/*printf("This is help cmd!\n");
+	printf("---------------------------------------------\n");
+	printf("|name	+ discription						 \n");
+	printf("---------------------------------------------\n");
+	printf("|help	+ cmd tips							 \n");
+	printf("|hello	+ welcome						   	 \n");
+	printf("|add	+ addition of two numbers.			 \n");
+	printf("|sub	+ subtraction of two numbers.		 \n");
+	printf("|mul	+ Multiplication of two numbers.	 \n");
+	printf("|div	+ Division of two numbers.			 \n");
+	printf("|quit	+ exit cmd.							 \n");
+	printf("---------------------------------------------\n");*/
+}
+
+/*
+void quit()
+{
+	char cmd[2];
+	printf("Are you sure to quit the programe?(Y/N)");
+	scanf("%s", cmd);
+	if(strcmp(cmd, "Y")==0 || strcmp(cmd, "y")==0)
+	{
+		exit(0);
+	}
+	else if(strcmp(cmd, "N")==0 || strcmp(cmd, "n")==0 )
+	{
+		;
+	}
+	else
+	{
+		printf("Error:illegal input.\n");
+	}
+}*/
+
+int main()
+{
+
+	/* cmd line begins */
+	while(1)
+	{
+		char cmd[CMD_MAX_LEN];
+		printf("Input a cmd number>");
+		scanf("%s", cmd);
+		tDataNode *p = FindCmd(head, cmd);
+		if(p == NULL)
+		{
+			printf("This is a wrong cmd!\n");
+			continue;	
+		}
+		printf("%s - %s\n", p->cmd, p->desc);
+		if(p->handler != NULL)
+		{
+			p->handler();
+		}
+
+
+		while(p != NULL)
+		{
+			if(strcmp(p->cmd, cmd) == 0)//如果输入的命令和内置的命令判断=0为true，那么打印命令和它的描述
+			{
+				printf("%s - %s\n", p->cmd, p->desc);
+				if(p->handler != NULL)//如果命令还有对应的函数
+				{
+					p->handler();//用函数指针调用一个函数
+				}
+				break;
+			}
+			p = p->next;
+		}
+
+		/*
+		if(strcmp(cmd, "hello") == 0)
+		{
+			hello();
+		}
+		else if(strcmp(cmd, "h") == 0)
+		{
+			help();
+		}
+		else if(strcmp(cmd, "quit") == 0)
+		{
+			quit();
+		}
+		else if(strcmp(cmd, "add") == 0)
+		{
+			add();
+		}
+		else if(strcmp(cmd, "sub")==0)
+		{
+			sub();
+		}
+		else if(strcmp(cmd, "mul")==0)
+		{
+			mul();
+		}
+		else if(strcmp(cmd, "div")==0)
+		{
+			Div();
+		}
+		else
+		{
+			printf("Error:Wrong input!\nPlease input 'h' for help.\n");
+		}*/
+	}
 }
 
 int Quit()
 {
-	    exit(0);
+	exit(0);
 }
+
